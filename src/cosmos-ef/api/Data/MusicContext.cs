@@ -17,13 +17,16 @@ namespace Api.Data
         {
             optionsBuilder.UseCosmos(
                 accountEndpoint: _configuration["CosmosDb:Endpoint"],
-                accountKey: _configuration["CosmosDb.Key"],
+                accountKey: _configuration["CosmosDb:Key"],
                 databaseName: _configuration["CosmosDb:Database"]);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Artist>().ToContainer("Artists")
+            modelBuilder.Entity<Artist>()
+                .ToContainer("Artists")
+                .HasNoDiscriminator()
+                .HasPartitionKey("Id");
         }
     }
 }

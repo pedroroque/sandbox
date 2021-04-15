@@ -4,7 +4,7 @@ namespace Api.Data
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
 
-    class MusicContext : DbContext
+    public class MusicContext : DbContext
     {
         private readonly IConfiguration _configuration;
 

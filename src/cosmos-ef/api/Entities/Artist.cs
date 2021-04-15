@@ -12,5 +12,7 @@ namespace Api.Entities
             Id = Guid.NewGuid().ToString();
             Name = name;
         }
+
+        protected Artist() { }
     }
 }

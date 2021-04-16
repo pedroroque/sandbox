@@ -26,7 +26,8 @@ namespace Api.Data
             modelBuilder.Entity<Artist>()
                 .ToContainer("Artists")
                 .HasNoDiscriminator()
-                .HasPartitionKey("Id");
+                .HasPartitionKey("Id")
+                .HasIndex(x => x.Name).IsUnique();
         }
     }
 }

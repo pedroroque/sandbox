@@ -1,37 +1,46 @@
 namespace Api.Controllers
 {
-    using System;
+    using System.Linq;
     using System.Threading.Tasks;
-    using Api.Data;
+    using Api.Dto.Request;
     using Api.Entities;
+    using Api.Interfaces;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-
 
     [ApiController]
     [Route("[controller]")]
     public class ArtistsController : ControllerBase
     {
-        private readonly MusicContext _dbContext;
+        private readonly IArtists _artists;
 
-        public ArtistsController(MusicContext dbContext)
+        public ArtistsController(IArtists artists)
         {
-            _dbContext = dbContext;
+            _artists = artists;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var artists = await _dbContext.Set<Artist>().ToListAsync();
-            return Ok(artists);
+            var artists = await _artists.GetAllAsync();
+            return Ok(artists.Select(x => new Dto.Response.Artist(x.Id, x.Name)));
+        }
+
+        [HttpGet("{id}", Name = nameof(GetById))]
+        public async Task<IActionResult> GetById([FromRoute] string id)
+        {
+            var artist = await _artists.GetByIdAsync(id);
+
+            return artist == null ? NotFound() : Ok(artist);
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNewArtist(Artist artist)
+        public async Task<IActionResult> PostNewArtist(NewArtist artist)
         {
-            var newArtist = await _dbContext.Set<Artist>().AddAsync(artist);
-            await _dbContext.SaveChangesAsync();
-            return Created("", newArtist.Entity);
+            var newArtist = await _artists.AddAsync(new Artist(artist.Name));
+            return Created(
+                Url.Link(nameof(GetById), new { id = newArtist.Id }),
+                new Dto.Response.Artist(newArtist.Id, newArtist.Name)
+            );
         }
     }
 }

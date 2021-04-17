@@ -8,7 +8,6 @@ namespace Api.Interfaces
 
     public interface IArtists
     {
-        Task<Artist> GetByNameAsync(string name);
         Task<Artist> GetByIdAsync(string id);
         Task<Artist> AddAsync(Artist artist);
         Task<IEnumerable<Artist>> GetAllAsync();

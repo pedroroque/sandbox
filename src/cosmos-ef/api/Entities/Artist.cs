@@ -9,10 +9,10 @@ namespace Api.Entities
 
         public Artist(string name)
         {
-            Id = Guid.NewGuid().ToString();
+            Id = name.Replace(' ','-').ToLower();
             Name = name;
         }
 
-        protected Artist() { }
+        public Artist() { }
     }
 }

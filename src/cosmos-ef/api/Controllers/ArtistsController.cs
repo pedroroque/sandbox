@@ -1,3 +1,5 @@
+using Microsoft.Azure.Cosmos.Linq;
+
 namespace Api.Controllers
 {
     using System.Linq;
@@ -36,7 +38,11 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNewArtist(NewArtist artist)
         {
-            var newArtist = await _artists.AddAsync(new Artist(artist.Name));
+            var newArtist = new Artist(artist.Name);
+            var existing = await _artists.GetByIdAsync(newArtist.Id);
+            if (existing != null) return Conflict();
+
+            await _artists.AddAsync(new Artist(artist.Name));
             return Created(
                 Url.Link(nameof(GetById), new { id = newArtist.Id }),
                 new Dto.Response.Artist(newArtist.Id, newArtist.Name)

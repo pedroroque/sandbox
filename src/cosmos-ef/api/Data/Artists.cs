@@ -1,3 +1,8 @@
+using System;
+using System.Linq;
+using System.Net;
+using Microsoft.Azure.Cosmos;
+
 namespace Api.Data
 {
     using System.Collections.Generic;
@@ -31,12 +36,16 @@ namespace Api.Data
 
         public async Task<Artist> GetByIdAsync(string id)
         {
-            return await _artists.FindAsync(id);
-        }
-
-        public Task<Artist> GetByNameAsync(string name)
-        {
-            throw new System.NotImplementedException();
+            try
+            {
+                return await _artists.FindAsync(id);
+            }
+            catch (CosmosException e)
+            {
+                if(e.StatusCode==HttpStatusCode.NotFound)
+                    return null;
+                throw;
+            }
         }
     }
 }
